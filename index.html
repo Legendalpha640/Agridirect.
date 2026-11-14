@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AGRIDIRECT (agridirect.in) - সরাসরি কৃষক থেকে ক্রেতা</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts: Hind Siliguri & Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Hind Siliguri"', 'Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        krishi: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        },
+                        harvest: {
+                            400: '#facc15',
+                            500: '#eab308',
+                            600: '#ca8a04',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Hind Siliguri', 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        @keyframes pulse-Subtle {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+        .usp-badge { animation: pulse-Subtle 2.5s infinite ease-in-out; }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col">
+
+    <!-- TOP ANNOUNCEMENT & LIVE STATUS BAR -->
+    <div class="bg-krishi-900 text-white text-xs sm:text-sm py-2 px-4 border-b border-krishi-800">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center space-x-2">
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping mr-1.5"></span>
+                    <span>agridirect.in • Live Production Server Active</span>
+                </span>
+                <span class="hidden md:inline text-emerald-200">| সরাসরি কৃষক থেকে ক্রেতা - মধ্যস্বত্বভোগী ছাড়া ন্যায্য মূল্যে কেনাবেচা</span>
+            </div>
+            <div class="flex items-center space-x-3 ml-auto">
+                <button onclick="openAiModal()" class="bg-harvest-500 hover:bg-harvest-600 text-slate-950 font-bold px-3 py-1 rounded-lg text-xs transition flex items-center gap-1.5 shadow-sm usp-badge">
+                    <i class="fa-solid fa-robot"></i>
+                    <span>AgriDirect AI সহায়ক</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN NAVIGATION HEADER -->
+    <header class="bg-white shadow-sm sticky top-0 z-30 border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="switchMainView('auth')">
+                <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-krishi-600 to-krishi-800 flex items-center justify-center text-white text-xl shadow-md">
+                    <i class="fa-solid fa-wheat-awn"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-1.5">
+                        <h1 class="text-xl font-bold text-krishi-800 tracking-tight leading-none">AGRIDIRECT</h1>
+                        <span class="text-xs font-semibold text-amber-800 bg-amber-100 px-1.5 py-0.5 rounded">agridirect.in</span>
+                    </div>
+                    <p class="text-[11px] text-slate-500 mt-0.5">Direct Farmer-to-Buyer Portal</p>
+                </div>
+            </div>
+
+            <nav class="hidden md:flex items-center space-x-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
+                <button onclick="switchMainView('auth')" id="navBtn-auth" class="px-3.5 py-1.5 rounded-lg text-sm font-semibold transition flex items-center gap-1.5 bg-white text-krishi-700 shadow-sm">
+                    <i class="fa-solid fa-user-plus"></i>
+                    <span>১. রেজিস্ট্রেশন / লগইন</span>
+                </button>
+                <button onclick="switchMainView('marketplace')" id="navBtn-marketplace" class="px-3.5 py-1.5 rounded-lg text-sm font-semibold transition flex items-center gap-1.5 text-slate-600 hover:text-krishi-700">
+                    <i class="fa-solid fa-store"></i>
+                    <span>২. বাজার (Marketplace)</span>
+                </button>
+                <button onclick="switchMainView('farmerDash')" id="navBtn-farmerDash" class="px-3.5 py-1.5 rounded-lg text-sm font-semibold transition flex items-center gap-1.5 text-slate-600 hover:text-krishi-700">
+                    <i class="fa-solid fa-tractor"></i>
+                    <span>৩. কৃষক ড্যাশবোর্ড</span>
+                </button>
+                <button onclick="switchMainView('orders')" id="navBtn-orders" class="px-3.5 py-1.5 rounded-lg text-sm font-semibold transition flex items-center gap-1.5 text-slate-600 hover:text-krishi-700">
+                    <i class="fa-solid fa-box-open"></i>
+                    <span>৪. অর্ডার (<span id="orderCountBadge">0</span>)</span>
+                </button>
+            </nav>
+
+            <div class="flex items-center gap-2.5">
+                <div id="userStatusPill" class="hidden sm:flex items-center gap-2 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-xl">
+                    <div class="w-7 h-7 rounded-full bg-krishi-600 text-white flex items-center justify-center text-xs font-bold" id="userAvatar">G</div>
+                    <div class="text-xs leading-tight">
+                        <p class="font-bold text-slate-800" id="userNameDisplay">Guest User</p>
+                        <p class="text-[10px] text-krishi-700 font-medium" id="userRoleDisplay">লগইন করা নেই</p>
+                    </div>
+                    <button onclick="logoutUser()" id="logoutBtn" class="hidden ml-1 text-slate-400 hover:text-red-500 text-xs" title="লগআউট">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </button>
+                </div>
+
+                <button onclick="toggleCartDrawer(true)" class="relative bg-krishi-600 hover:bg-krishi-700 text-white px-3.5 py-2 rounded-xl font-semibold text-sm shadow-sm transition flex items-center gap-2">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="hidden sm:inline">কার্ট</span>
+                    <span id="cartBadge" class="bg-harvest-400 text-slate-900 font-bold text-xs px-2 py-0.5 rounded-full">0</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="flex md:hidden overflow-x-auto bg-slate-50 border-t border-slate-200 px-2 py-1.5 gap-1.5 text-xs font-semibold">
+            <button onclick="switchMainView('auth')" id="mobNav-auth" class="px-3 py-1.5 rounded-lg whitespace-nowrap bg-krishi-600 text-white">১. রেজিস্ট্রেশন</button>
+            <button onclick="switchMainView('marketplace')" id="mobNav-marketplace" class="px-3 py-1.5 rounded-lg whitespace-nowrap bg-white text-slate-700 border">২. বাজার</button>
+            <button onclick="switchMainView('farmerDash')" id="mobNav-farmerDash" class="px-3 py-1.5 rounded-lg whitespace-nowrap bg-white text-slate-700 border">৩. কৃষক প্যানেল</button>
+            <button onclick="switchMainView('orders')" id="mobNav-orders" class="px-3 py-1.5 rounded-lg whitespace-nowrap bg-white text-slate-700 border">৪. অর্ডার লিস্ট</button>
+        </div>
+    </header>
+
+    <div id="toastContainer" class="fixed top-20 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- VIEW 1: REGISTRATION & LOGIN -->
+        <section id="view-auth" class="space-y-8">
+            <div class="bg-gradient-to-r from-krishi-800 via-krishi-700 to-emerald-800 rounded-2xl p-6 sm:p-8 text-white shadow-lg relative overflow-hidden">
+                <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                    <div class="lg:col-span-7 space-y-3">
+                        <div class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold text-harvest-400 border border-white/20">
+                            <i class="fa-solid fa-check-circle"></i>
+                            <span>AGRIDIRECT.IN • ১০০% রেডি টু হোস্ট পোর্টাল</span>
+                        </div>
+                        <h2 class="text-2xl sm:text-4xl font-bold leading-tight">
+                            কৃষকের ফসল, সরাসরি ক্রেতার ঘরে!
+                        </h2>
+                        <p class="text-emerald-100 text-sm sm:text-base max-w-2xl">
+                            <strong>agridirect.in</strong>-এ আপনার তথ্য দিয়ে সরাসরি রেজিস্ট্রেশন করুন। ডেটাবেসে সেভ হয়ে স্বয়ংক্রিয়ভাবে মার্কেটপ্লেসে প্রবেশ করবে।
+                        </p>
+                        <div class="pt-2 flex flex-wrap items-center gap-3">
+                            <button onclick="quickDemoLogin('buyer')" class="bg-harvest-400 hover:bg-harvest-500 text-slate-900 font-bold px-4 py-2.5 rounded-xl text-sm shadow transition flex items-center gap-2">
+                                <i class="fa-solid fa-bolt"></i>
+                                <span>১-ক্লিকে ডেমো ক্রেতা লগইন</span>
+                            </button>
+                            <button onclick="quickDemoLogin('farmer')" class="bg-white/15 hover:bg-white/25 text-white border border-white/30 font-semibold px-4 py-2.5 rounded-xl text-sm transition flex items-center gap-2">
+                                <i class="fa-solid fa-seedling"></i>
+                                <span>ডেমো কৃষক লগইন</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-5 bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 space-y-3 text-xs sm:text-sm">
+                        <p class="font-bold text-harvest-400 uppercase tracking-wider text-xs">ওয়েবসাইটের মূল বৈশিষ্ট্য:</p>
+                        <div class="flex items-start gap-3">
+                            <span class="w-6 h-6 rounded-full bg-harvest-400 text-slate-900 font-bold flex items-center justify-center shrink-0 mt-0.5">১</span>
+                            <div>
+                                <p class="font-bold">সরাসরি নিবন্ধন ও ব্রাউজার স্টোরেজ</p>
+                                <p class="text-emerald-100 text-xs">নিবন্ধন করার সাথে সাথেই ডেটা সিকিউরডভাবে সংরক্ষিত হয়।</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <span class="w-6 h-6 rounded-full bg-emerald-400 text-slate-900 font-bold flex items-center justify-center shrink-0 mt-0.5">২</span>
+                            <div>
+                                <p class="font-bold">কার্ট ও পেমেন্ট (COD / UPI)</p>
+                                <p class="text-emerald-100 text-xs">সহজে ক্যাশ অন ডেলিভারি বা অনলাইনে অর্ডার প্লেস করুন।</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <span class="w-6 h-6 rounded-full bg-sky-400 text-slate-900 font-bold flex items-center justify-center shrink-0 mt-0.5">৩</span>
+                            <div>
+                                <p class="font-bold">ইন-বিল্ট AI অ্যাসিস্ট্যান্ট</p>
+                                <p class="text-emerald-100 text-xs">কৃষি ও বাজার সংক্রান্ত সব প্রশ্নের তাত্ক্ষণিক সমাধান।</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                <div class="lg:col-span-7 bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden">
+                    <div class="grid grid-cols-3 border-b border-slate-200 bg-slate-50">
+                        <button type="button" onclick="setAuthTab('buyer')" id="authTab-buyer" class="py-4 px-3 text-center font-bold text-sm sm:text-base border-b-4 border-krishi-600 bg-white text-krishi-800 transition flex flex-col sm:flex-row items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-basket-shopping text-krishi-600"></i>
+                            <span>ক্রেতা নিবন্ধন</span>
+                        </button>
+                        <button type="button" onclick="setAuthTab('farmer')" id="authTab-farmer" class="py-4 px-3 text-center font-bold text-sm sm:text-base border-b-4 border-transparent text-slate-600 hover:text-krishi-700 transition flex flex-col sm:flex-row items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-tractor text-amber-600"></i>
+                            <span>কৃষক নিবন্ধন</span>
+                        </button>
+                        <button type="button" onclick="setAuthTab('login')" id="authTab-login" class="py-4 px-3 text-center font-bold text-sm sm:text-base border-b-4 border-transparent text-slate-600 hover:text-krishi-700 transition flex flex-col sm:flex-row items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-key text-blue-600"></i>
+                            <span>লগইন করুন</span>
+                        </button>
+                    </div>
+
+                    <form id="registrationForm" onsubmit="handleRegistrationSubmit(event)" class="p-6 sm:p-8 space-y-5">
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                            <div>
+                                <h3 id="formTitle" class="text-xl font-bold text-slate-800">ক্রেতা নিবন্ধন ফর্ম (Buyer)</h3>
+                                <p id="formSubtitle" class="text-xs text-slate-500">agridirect.in থেকে তাজা ফসল সরাসরি কিনতে নিবন্ধন করুন</p>
+                            </div>
+                            <span class="bg-emerald-100 text-krishi-800 text-xs font-bold px-2.5 py-1 rounded-lg border border-emerald-200">
+                                <i class="fa-solid fa-database mr-1"></i>Active DB
+                            </span>
+                        </div>
+
+                        <input type="hidden" id="regRole" value="buyer">
+
+                        <div id="registerFieldsGroup" class="space-y-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-1">আপনার পুরো নাম <span class="text-red-500">*</span></label>
+                                    <div class="relative">
+                                        <i class="fa-solid fa-user absolute left-3.5 top-3 text-slate-400"></i>
+                                        <input type="text" id="regName" placeholder="যেমন: অরিন্দম সেন" class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:border-krishi-600 outline-none text-sm">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-1">মোবাইল নম্বর <span class="text-red-500">*</span></label>
+                                    <div class="relative">
+                                        <i class="fa-solid fa-phone absolute left-3.5 top-3 text-slate-400"></i>
+                                        <input type="tel" id="regPhone" required placeholder="যেমন: 9876543210" class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:border-krishi-600 outline-none text-sm">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-1">গ্রাম বা শহরের নাম <span class="text-red-500">*</span></label>
+                                    <div class="relative">
+                                        <i class="fa-solid fa-location-dot absolute left-3.5 top-3 text-slate-400"></i>
+                                        <input type="text" id="regLocation" placeholder="যেমন: হুগলি / কলকাতা" class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:border-krishi-600 outline-none text-sm">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-1">পিন কোড <span class="text-red-500">*</span></label>
+                                    <div class="relative">
+                                        <i class="fa-solid fa-map-pin absolute left-3.5 top-3 text-slate-400"></i>
+                                        <input type="text" id="regPin" placeholder="যেমন: 712101" class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:border-krishi-600 outline-none text-sm">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="farmerExtraField" class="hidden">
+                                <label class="block text-sm font-semibold text-slate-700 mb-1">প্রধান উৎপাদিত ফসল</label>
+                                <input type="text" id="regCrops" placeholder="যেমন: আলু, ধান, টমেটো" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-krishi-600 outline-none text-sm">
+                            </div>
+                        </div>
+
+                        <div id="loginOnlyGroup" class="hidden space-y-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-1">নিবন্ধিত মোবাইল নম্বর দিন <span class="text-red-500">*</span></label>
+                                <div class="relative">
+                                    <i class="fa-solid fa-phone absolute left-3.5 top-3 text-slate-400"></i>
+                                    <input type="tel" id="loginPhone" placeholder="মোবাইল নম্বর লিখুন" class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:border-krishi-600 outline-none text-sm">
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" id="authSubmitBtn" class="w-full bg-krishi-600 hover:bg-krishi-700 text-white font-bold py-3 rounded-xl shadow-md transition flex items-center justify-center gap-2 text-base">
+                            <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                            <span>রেজিস্ট্রেশন সম্পন্ন করুন ও বাজারে যান</span>
+                        </button>
+                    </form>
+                </div>
+
+                <div class="lg:col-span-5 bg-white rounded-2xl shadow-md border border-slate-200 p-6 space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                        <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-users text-krishi-600"></i>
+                            <span>নিবন্ধিত সদস্য তালিকা</span>
+                        </h3>
+                        <span id="totalUsersCount" class="text-xs font-bold bg-slate-100 px-2.5 py-1 rounded-full text-slate-700">0 জন</span>
+                    </div>
+                    <p class="text-xs text-slate-500">যেকোনো অ্যাকাউন্টে ক্লিক করে সরাসরি লগইন করুন:</p>
+                    <div id="savedUsersList" class="space-y-2.5 max-h-80 overflow-y-auto custom-scrollbar pr-1"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 2: MARKETPLACE -->
+        <section id="view-marketplace" class="hidden space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-800">AGRIDIRECT তাজা ফসলের বাজার</h2>
+                    <p class="text-xs sm:text-sm text-slate-500">সরাসরি কৃষকের খামার থেকে ন্যায্য দামে অর্ডার করুন • <span class="text-krishi-700 font-semibold">agridirect.in</span></p>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                    <input type="text" id="searchCropInput" onkeyup="renderMarketplace()" placeholder="ফসল খুঁজুন..." class="px-3.5 py-2 rounded-xl border border-slate-300 text-sm focus:border-krishi-600 outline-none">
+                    <select id="categoryFilter" onchange="renderMarketplace()" class="px-3.5 py-2 rounded-xl border border-slate-300 text-sm bg-white focus:border-krishi-600 outline-none">
+                        <option value="all">সব ক্যাটাগরি</option>
+                        <option value="সবজি">তাজা সবজি</option>
+                        <option value="শস্য ও চাল">শস্য ও চাল</option>
+                        <option value="ফলমূল">ফলমূল</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="marketplaceGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </section>
+
+        <!-- VIEW 3: FARMER DASHBOARD -->
+        <section id="view-farmerDash" class="hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div class="lg:col-span-5 bg-white rounded-2xl shadow-md border border-slate-200 p-6 space-y-4">
+                    <div class="border-b border-slate-100 pb-3">
+                        <h3 class="text-xl font-bold text-krishi-800 flex items-center gap-2">
+                            <i class="fa-solid fa-plus-circle"></i>
+                            <span>নতুন ফসল বিক্রির জন্য যোগ করুন</span>
+                        </h3>
+                        <p class="text-xs text-slate-500">আপনার ফসল সরাসরি agridirect.in বাজারে প্রদর্শিত হবে</p>
+                    </div>
+
+                    <form onsubmit="handleAddProduct(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1">ফসলের নাম <span class="text-red-500">*</span></label>
+                            <input type="text" id="prodName" required placeholder="যেমন: জ্যোতি আলু" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm outline-none focus:border-krishi-600">
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-1">ক্যাটাগরি</label>
+                                <select id="prodCategory" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm bg-white outline-none">
+                                    <option value="সবজি">সবজি</option>
+                                    <option value="শস্য ও চাল">শস্য ও চাল</option>
+                                    <option value="ফলমূল">ফলমূল</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-1">প্রতি কেজি দাম (₹) <span class="text-red-500">*</span></label>
+                                <input type="number" id="prodPrice" required min="1" placeholder="24" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm outline-none focus:border-krishi-600">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-1">মজুত (কেজি) <span class="text-red-500">*</span></label>
+                                <input type="number" id="prodStock" required min="1" placeholder="500" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm outline-none focus:border-krishi-600">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-1">কৃষকের নাম / এলাকা</label>
+                                <input type="text" id="prodFarmer" placeholder="সুবল দাস (হুগলি)" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm outline-none focus:border-krishi-600">
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full bg-krishi-600 hover:bg-krishi-700 text-white font-bold py-2.5 rounded-xl shadow transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-upload"></i>
+                            <span>বাজারে ফসল প্রকাশ করুন</span>
+                        </button>
+                    </form>
+                </div>
+<div class="lg:col-span-7 bg-white rounded-2xl shadow-md border border-slate-200 p-6 space-y-4">
+                    <h3 class="text-xl font-bold text-slate-800 border-b border-slate-100 pb-3">বর্তমানে বাজারে তালিকাভুক্ত ফসলসমূহ</h3>
+                    <div id="farmerListingsTable" class="space-y-3 max-h-[450px] overflow-y-auto custom-scrollbar"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 4: ORDERS -->
+        <section id="view-orders" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-800">অর্ডার তালিকা ও ডেলিভারি স্ট্যাটাস</h2>
+                    <p class="text-xs sm:text-sm text-slate-500">AGRIDIRECT (agridirect.in) থেকে করা সমস্ত অর্ডারের লাইভ বিবরণ</p>
+                </div>
+                <button onclick="switchMainView('marketplace')" class="bg-krishi-600 hover:bg-krishi-700 text-white px-4 py-2 rounded-xl text-sm font-bold">
+                    + নতুন অর্ডার করুন
+                </button>
+            </div>
+
+            <div id="ordersListContainer" class="space-y-4"></div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 text-slate-300 py-6 px-4 mt-12 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs sm:text-sm">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-wheat-awn text-krishi-500 text-lg"></i>
+                <span class="font-bold text-white">AGRIDIRECT</span>
+                <span class="text-slate-400">• Official Portal: <strong class="text-emerald-400">agridirect.in</strong></span>
+            </div>
+            <p class="text-slate-400 text-center sm:text-right">© 2026 AGRIDIRECT (agridirect.in) | কৃষকের ক্ষমতায়ন ও সরাসরি বাজার সংযোগ</p>
+        </div>
+    </footer>
+
+    <!-- CART SLIDE-OVER DRAWER -->
+    <div id="cartDrawer" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onclick="toggleCartDrawer(false)"></div>
+        <div class="absolute right-0 top-0 bottom-0 w-full max-w-md bg-white shadow-2xl flex flex-col">
+            <div class="p-5 bg-krishi-800 text-white flex items-center justify-between">
+                <h3 class="font-bold text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span>আপনার বাজারের ঝুড়ি (Cart)</span>
+                </h3>
+                <button onclick="toggleCartDrawer(false)" class="text-white/80 hover:text-white text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div id="cartItemsContainer" class="flex-grow p-5 overflow-y-auto space-y-3 custom-scrollbar"></div>
+
+            <div class="p-5 border-t border-slate-200 bg-slate-50 space-y-4">
+                <div class="flex items-center justify-between text-base font-bold text-slate-800">
+                    <span>সর্বমোট মূল্য:</span>
+                    <span id="cartTotalAmount" class="text-xl text-krishi-700">₹0</span>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1.5 uppercase">পেমেন্ট পদ্ধতি:</label>
+                    <div class="grid grid-cols-2 gap-2 text-xs font-bold">
+                        <label class="cursor-pointer border rounded-xl p-2.5 flex items-center gap-2 bg-white border-krishi-600 text-krishi-800">
+                            <input type="radio" name="paymentMethod" value="Cash on Delivery (COD)" checked class="accent-krishi-600">
+                            <span>ক্যাশ অন ডেলিভারি (COD)</span>
+                        </label>
+                        <label class="cursor-pointer border rounded-xl p-2.5 flex items-center gap-2 bg-white border-slate-300 text-slate-700">
+                            <input type="radio" name="paymentMethod" value="UPI / Online Payment" class="accent-krishi-600">
+                            <span>UPI / অনলাইন পেমেন্ট</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button onclick="placeOrder()" class="w-full bg-krishi-600 hover:bg-krishi-700 text-white font-bold py-3 rounded-xl shadow-md transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-check-circle"></i>
+                    <span>অর্ডার কনফার্ম করুন</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI ASSISTANT MODAL -->
+    <div id="aiModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeAiModal()"></div>
+        <div class="relative bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden flex flex-col max-h-[85vh]">
+            <div class="bg-krishi-800 text-white p-4 flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-full bg-harvest-400 text-slate-900 flex items-center justify-center font-bold">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-base">AgriDirect AI সহায়ক</h3>
+                        <p class="text-[11px] text-emerald-200">agridirect.in স্মার্ট কৃষি ও বাজার পরামর্শদাতা</p>
+                    </div>
+                </div>
+                <button onclick="closeAiModal()" class="text-white/80 hover:text-white text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div id="aiChatBox" class="p-4 space-y-3 overflow-y-auto flex-grow bg-slate-50 text-sm custom-scrollbar h-72">
+                <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
+                    নমস্কার! আমি <strong>AgriDirect AI</strong>। ফসলের দাম বা অর্ডার প্রক্রিয়া নিয়ে আপনার যেকোনো প্রশ্ন নিচে জিজ্ঞেস করতে পারেন।
+                </div>
+            </div>
+
+            <div class="p-3 bg-white border-t border-slate-200 space-y-2">
+                <div class="flex flex-wrap gap-1.5 text-xs">
+                    <button onclick="askQuickAi('কীভাবে অর্ডার করব?')" class="bg-emerald-50 hover:bg-emerald-100 text-krishi-800 px-2.5 py-1 rounded-full border border-emerald-200">কীভাবে অর্ডার করব?</button>
+                    <button onclick="askQuickAi('কৃষক কীভাবে ফসল বেচবেন?')" class="bg-emerald-50 hover:bg-emerald-100 text-krishi-800 px-2.5 py-1 rounded-full border border-emerald-200">কৃষক কীভাবে ফসল বেচবেন?</button>
+                    <button onclick="askQuickAi('আজকের বাজার দর কত?')" class="bg-emerald-50 hover:bg-emerald-100 text-krishi-800 px-2.5 py-1 rounded-full border border-emerald-200">আজকের বাজার দর?</button>
+                </div>
+                <form onsubmit="handleAiChat(event)" class="flex gap-2">
+                    <input type="text" id="aiUserInput" placeholder="আপনার প্রশ্ন লিখুন..." class="flex-grow px-3.5 py-2 rounded-xl border border-slate-300 text-sm outline-none focus:border-krishi-600">
+                    <button type="submit" class="bg-krishi-600 hover:bg-krishi-700 text-white px-4 py-2 rounded-xl font-bold text-sm">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+<!-- JAVASCRIPT LOGIC -->
+    <script>
+        const defaultProducts = [
+            { id: 101, name: "তাজা জ্যোতি আলু", category: "সবজি", price: 22, stock: 500, farmer: "রহিম শেখ (হুগলি)", icon: "🥔" },
+            { id: 102, name: "পাকা দেশি টমেটো", category: "সবজি", price: 35, stock: 250, farmer: "সুবল দাস (নদীয়া)", icon: "🍅" },
+            { id: 103, name: "গোবিন্দভোগ সুগন্ধি চাল", category: "শস্য ও চাল", price: 85, stock: 400, farmer: "তপন মণ্ডল (বর্ধমান)", icon: "🌾" },
+            { id: 104, name: "টাটকা বেগুন", category: "সবজি", price: 30, stock: 180, farmer: "আব্দুল করিম (বারাসাত)", icon: "🍆" },
+            { id: 105, name: "হিমসাগর আম", category: "ফলমূল", price: 75, stock: 300, farmer: "নজরুল ইসলাম (মালদা)", icon: "🥭" },
+            { id: 106, name: "লাল পেঁয়াজ", category: "সবজি", price: 32, stock: 600, farmer: "বিকাশ মাহাতো (বাঁকুড়া)", icon: "🧅" }
+        ];
+
+        const defaultUsers = [
+            { id: 1, name: "অরিন্দম সেন (Demo Buyer)", phone: "9830011223", location: "কলকাতা", pin: "700001", role: "buyer" },
+            { id: 2, name: "রহিম শেখ (Demo Farmer)", phone: "9732044556", location: "তারকেশ্বর", pin: "712410", role: "farmer", crops: "আলু, ধান" }
+        ];
+
+        let usersDB = JSON.parse(localStorage.getItem('agridirect_users')) || defaultUsers;
+        let productsDB = JSON.parse(localStorage.getItem('agridirect_products')) || defaultProducts;
+        let ordersDB = JSON.parse(localStorage.getItem('agridirect_orders')) || [];
+        let cart = JSON.parse(localStorage.getItem('agridirect_cart')) || [];
+        let currentUser = JSON.parse(localStorage.getItem('agridirect_current_user')) || null;
+
+        function saveAllDB() {
+            localStorage.setItem('agridirect_users', JSON.stringify(usersDB));
+            localStorage.setItem('agridirect_products', JSON.stringify(productsDB));
+            localStorage.setItem('agridirect_orders', JSON.stringify(ordersDB));
+            localStorage.setItem('agridirect_cart', JSON.stringify(cart));
+            localStorage.setItem('agridirect_current_user', JSON.stringify(currentUser));
+        }
+
+        function showToast(msg, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            const bg = type === 'error' ? 'bg-red-600' : 'bg-krishi-800';
+            toast.className = `${bg} text-white px-4 py-3 rounded-xl shadow-lg text-sm font-medium flex items-center gap-2.5 pointer-events-auto`;
+            toast.innerHTML = `<i class="fa-solid ${type === 'error' ? 'fa-circle-exclamation' : 'fa-circle-check'} text-harvest-400"></i><span>${msg}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3500);
+        }
+
+        function switchMainView(viewName) {
+            ['auth', 'marketplace', 'farmerDash', 'orders'].forEach(v => {
+                document.getElementById(`view-${v}`).classList.add('hidden');
+                const navBtn = document.getElementById(`navBtn-${v}`);
+                if (navBtn) navBtn.className = "px-3.5 py-1.5 rounded-lg text-sm font-semibold transition flex items-center gap-1.5 text-slate-600 hover:text-krishi-700";
+                const mobBtn = document.getElementById(`mobNav-${v}`);
+                if (mobBtn) mobBtn.className = "px-3 py-1.5 rounded-lg whitespace-nowrap bg-white text-slate-700 border";
+            });
+
+            document.getElementById(`view-${viewName}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`navBtn-${viewName}`);
+            if (activeBtn) activeBtn.className = "px-3.5 py-1.5 rounded-lg text-sm font-semibold transition flex items-center gap-1.5 bg-white text-krishi-700 shadow-sm";
+            const activeMob = document.getElementById(`mobNav-${viewName}`);
+            if (activeMob) activeMob.className = "px-3 py-1.5 rounded-lg whitespace-nowrap bg-krishi-600 text-white";
+
+            if (viewName === 'marketplace') renderMarketplace();
+            if (viewName === 'farmerDash') renderFarmerListings();
+            if (viewName === 'orders') renderOrders();
+        }
+
+        let currentAuthMode = 'buyer';
+        function setAuthTab(mode) {
+            currentAuthMode = mode;
+            ['buyer', 'farmer', 'login'].forEach(t => {
+                document.getElementById(`authTab-${t}`).className = "py-4 px-3 text-center font-bold text-sm sm:text-base border-b-4 border-transparent text-slate-600 hover:text-krishi-700 transition flex flex-col sm:flex-row items-center justify-center gap-1.5";
+            });
+            document.getElementById(`authTab-${mode}`).className = "py-4 px-3 text-center font-bold text-sm sm:text-base border-b-4 border-krishi-600 bg-white text-krishi-800 transition flex flex-col sm:flex-row items-center justify-center gap-1.5";
+
+            const regGroup = document.getElementById('registerFieldsGroup');
+            const loginGroup = document.getElementById('loginOnlyGroup');
+            const farmerExtra = document.getElementById('farmerExtraField');
+            const title = document.getElementById('formTitle');
+            const btn = document.getElementById('authSubmitBtn');
+
+            if (mode === 'login') {
+                regGroup.classList.add('hidden');
+                loginGroup.classList.remove('hidden');
+                document.getElementById('regPhone').removeAttribute('required');
+                title.innerText = "AGRIDIRECT অ্যাকাউন্ট লগইন";
+                btn.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i><span>লগইন করুন</span>`;
+            } else {
+                regGroup.classList.remove('hidden');
+                loginGroup.classList.add('hidden');
+                document.getElementById('regPhone').setAttribute('required', 'true');
+                document.getElementById('regRole').value = mode;
+                if (mode === 'farmer') {
+                    farmerExtra.classList.remove('hidden');
+                    title.innerText = "কৃষক নিবন্ধন ফর্ম";
+                    btn.innerHTML = `<i class="fa-solid fa-tractor"></i><span>কৃষক হিসেবে নিবন্ধন করুন</span>`;
+                } else {
+                    farmerExtra.classList.add('hidden');
+                    title.innerText = "ক্রেতা নিবন্ধন ফর্ম";
+                    btn.innerHTML = `<i class="fa-solid fa-basket-shopping"></i><span>ক্রেতা হিসেবে নিবন্ধন করুন</span>`;
+                }
+            }
+        }
+function handleRegistrationSubmit(e) {
+            e.preventDefault();
+            if (currentAuthMode === 'login') {
+                const phone = document.getElementById('loginPhone').value.trim();
+                const found = usersDB.find(u => u.phone === phone);
+                if (!found) {
+                    showToast("এই নম্বরে কোনো অ্যাকাউন্ট পাওয়া যায়নি।", "error");
+                    return;
+                }
+                loginUser(found);
+                return;
+            }
+
+            const name = document.getElementById('regName').value.trim();
+            const phone = document.getElementById('regPhone').value.trim();
+            const location = document.getElementById('regLocation').value.trim();
+            const pin = document.getElementById('regPin').value.trim();
+            const role = document.getElementById('regRole').value;
+            const crops = document.getElementById('regCrops').value.trim();
+
+            if (!name || !phone || !location) {
+                showToast("সকল প্রয়োজনীয় তথ্য পূরণ করুন।", "error");
+                return;
+            }
+
+            const newUser = { id: Date.now(), name, phone, location, pin, role, crops };
+            usersDB.unshift(newUser);
+            saveAllDB();
+            renderSavedUsers();
+            loginUser(newUser);
+            e.target.reset();
+        }
+
+        function loginUser(user) {
+            currentUser = user;
+            saveAllDB();
+            updateUserHeader();
+            showToast(`স্বাগতম ${user.name}!`);
+            if (user.role === 'farmer') switchMainView('farmerDash');
+            else switchMainView('marketplace');
+        }
+
+        function quickDemoLogin(role) {
+            const demo = usersDB.find(u => u.role === role) || usersDB[0];
+            loginUser(demo);
+        }
+
+        function logoutUser() {
+            currentUser = null;
+            saveAllDB();
+            updateUserHeader();
+            showToast("লগআউট সফল হয়েছে।");
+            switchMainView('auth');
+        }
+
+        function updateUserHeader() {
+            const nameEl = document.getElementById('userNameDisplay');
+            const roleEl = document.getElementById('userRoleDisplay');
+            const avatarEl = document.getElementById('userAvatar');
+            const logoutBtn = document.getElementById('logoutBtn');
+
+            if (currentUser) {
+                nameEl.innerText = currentUser.name;
+                roleEl.innerText = currentUser.role === 'farmer' ? 'কৃষক' : 'ক্রেতা';
+                avatarEl.innerText = currentUser.name.charAt(0).toUpperCase();
+                logoutBtn.classList.remove('hidden');
+            } else {
+                nameEl.innerText = "Guest User";
+                roleEl.innerText = "লগইন নেই";
+                avatarEl.innerText = "G";
+                logoutBtn.classList.add('hidden');
+            }
+        }
+
+        function renderSavedUsers() {
+            const list = document.getElementById('savedUsersList');
+            document.getElementById('totalUsersCount').innerText = `${usersDB.length} জন`;
+            list.innerHTML = usersDB.map(u => `
+                <div onclick='loginUser(${JSON.stringify(u)})' class="p-3 rounded-xl border border-slate-200 hover:border-krishi-500 hover:bg-emerald-50/50 cursor-pointer transition flex items-center justify-between">
+                    <div>
+                        <p class="font-bold text-sm text-slate-800">${u.name}</p>
+                        <p class="text-xs text-slate-500"><i class="fa-solid fa-location-dot text-krishi-600 mr-1"></i>${u.location} • ${u.phone}</p>
+                    </div>
+                    <span class="text-[11px] font-bold px-2 py-0.5 rounded-full ${u.role === 'farmer' ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'}">
+                        ${u.role === 'farmer' ? 'কৃষক' : 'ক্রেতা'}
+                    </span>
+                </div>
+            `).join('');
+        }
+function renderMarketplace() {
+            const grid = document.getElementById('marketplaceGrid');
+            const search = document.getElementById('searchCropInput').value.toLowerCase();
+            const cat = document.getElementById('categoryFilter').value;
+
+            const filtered = productsDB.filter(p => {
+                const matchName = p.name.toLowerCase().includes(search) || p.farmer.toLowerCase().includes(search);
+                const matchCat = cat === 'all' || p.category === cat;
+                return matchName && matchCat;
+            });
+
+            grid.innerHTML = filtered.map(p => `
+                <div class="bg-white rounded-2xl shadow-sm hover:shadow-md border border-slate-200 overflow-hidden transition flex flex-col justify-between">
+                    <div class="p-5 space-y-3">
+                        <div class="flex items-start justify-between">
+                            <span class="text-4xl bg-emerald-50 p-3 rounded-2xl border border-emerald-100">${p.icon || '🌱'}</span>
+                            <span class="text-xs font-bold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-full">${p.category}</span>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-slate-800">${p.name}</h3>
+                            <p class="text-xs text-slate-500 mt-0.5"><i class="fa-solid fa-tractor text-krishi-600 mr-1"></i>কৃষক: ${p.farmer}</p>
+                        </div>
+                        <div class="flex items-baseline justify-between pt-2 border-t border-slate-100">
+                            <div>
+                                <span class="text-2xl font-bold text-krishi-700">₹${p.price}</span>
+                                <span class="text-xs text-slate-500">/ কেজি</span>
+                            </div>
+                            <span class="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">মজুত: ${p.stock} কেজি</span>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-slate-50 border-t border-slate-100">
+                        <button onclick="addToCart(${p.id})" class="w-full bg-krishi-600 hover:bg-krishi-700 text-white font-bold py-2.5 rounded-xl text-sm transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-cart-plus"></i>
+                            <span>কার্টে যোগ করুন</span>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function handleAddProduct(e) {
+            e.preventDefault();
+            const name = document.getElementById('prodName').value.trim();
+            const category = document.getElementById('prodCategory').value;
+            const price = Number(document.getElementById('prodPrice').value);
+            const stock = Number(document.getElementById('prodStock').value);
+            const farmerInput = document.getElementById('prodFarmer').value.trim();
+            const farmer = farmerInput || (currentUser ? `${currentUser.name} (${currentUser.location})` : "নিবন্ধিত কৃষক");
+
+            const newProd = {
+                id: Date.now(),
+                name,
+                category,
+                price,
+                stock,
+                farmer,
+                icon: category === 'ফলমূল' ? '🍎' : (category === 'শস্য ও চাল' ? '🌾' : '🥬')
+            };
+
+            productsDB.unshift(newProd);
+            saveAllDB();
+            renderFarmerListings();
+            e.target.reset();
+            showToast(`"${name}" সফলভাবে বাজারে যুক্ত হয়েছে!`);
+        }
+
+        function renderFarmerListings() {
+            const box = document.getElementById('farmerListingsTable');
+            box.innerHTML = productsDB.map(p => `
+                <div class="p-3.5 rounded-xl border border-slate-200 flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-3">
+                        <span class="text-2xl">${p.icon || '🌱'}</span>
+                        <div>
+                            <p class="font-bold text-sm text-slate-800">${p.name}</p>
+                            <p class="text-xs text-slate-500">${p.farmer} • মজুত: ${p.stock} কেজি</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-bold text-krishi-700">₹${p.price}/কেজি</p>
+                        <button onclick="deleteProduct(${p.id})" class="text-xs text-red-500 hover:underline">ডিলিট</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function deleteProduct(id) {
+            productsDB = productsDB.filter(p => p.id !== id);
+            saveAllDB();
+            renderFarmerListings();
+            showToast("ফসলটি তালিকা থেকে সরানো হয়েছে।");
+        }
+
+        function addToCart(prodId) {
+            const product = productsDB.find(p => p.id === prodId);
+            if (!product) return;
+            const existing = cart.find(item => item.id === prodId);
+            if (existing) existing.qty += 1;
+            else cart.push({ ...product, qty: 1 });
+            saveAllDB();
+            updateCartUI();
+            showToast(`"${product.name}" কার্টে যোগ করা হয়েছে!`);
+        }
+
+        function updateCartQty(prodId, delta) {
+            const item = cart.find(i => i.id === prodId);
+            if (!item) return;
+            item.qty += delta;
+            if (item.qty <= 0) cart = cart.filter(i => i.id !== prodId);
+            saveAllDB();
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const count = cart.reduce((sum, item) => sum + item.qty, 0);
+            document.getElementById('cartBadge').innerText = count;
+
+            const container = document.getElementById('cartItemsContainer');
+            if (cart.length === 0) {
+                container.innerHTML = `<div class="text-center text-slate-400 py-12"><i class="fa-solid fa-basket-shopping text-4xl mb-2"></i><p>আপনার কার্ট খালি</p></div>`;
+                document.getElementById('cartTotalAmount').innerText = "₹0";
+                return;
+            }
+let total = 0;
+            container.innerHTML = cart.map(item => {
+                const sub = item.price * item.qty;
+                total += sub;
+                return `
+                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between gap-2">
+                        <div>
+                            <p class="font-bold text-sm text-slate-800">${item.name}</p>
+                            <p class="text-xs text-slate-500">₹${item.price} × ${item.qty} = <strong>₹${sub}</strong></p>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <button onclick="updateCartQty(${item.id}, -1)" class="w-7 h-7 rounded-lg bg-white border font-bold">-</button>
+                            <span class="text-sm font-bold px-1">${item.qty}</span>
+                            <button onclick="updateCartQty(${item.id}, 1)" class="w-7 h-7 rounded-lg bg-white border font-bold">+</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('cartTotalAmount').innerText = `₹${total}`;
+        }
+
+        function toggleCartDrawer(open) {
+            const drawer = document.getElementById('cartDrawer');
+            if (open) {
+                updateCartUI();
+                drawer.classList.remove('hidden');
+            } else {
+                drawer.classList.add('hidden');
+            }
+        }
+
+        function placeOrder() {
+            if (cart.length === 0) {
+                showToast("কার্টে কোনো ফসল নেই!", "error");
+                return;
+            }
+            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+            const total = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
+
+            const newOrder = {
+                orderId: "AGD-" + Math.floor(100000 + Math.random() * 900000),
+                buyer: currentUser ? currentUser.name : "অতিথি ক্রেতা",
+                address: currentUser ? `${currentUser.location} (${currentUser.pin || 'WB'})` : "পশ্চিমবঙ্গ",
+                items: [...cart],
+                total,
+                paymentMethod,
+                date: new Date().toLocaleString('bn-IN'),
+                status: "অর্ডার গৃহীত"
+            };
+
+            ordersDB.unshift(newOrder);
+            cart = [];
+            saveAllDB();
+            updateCartUI();
+            updateOrderBadge();
+            toggleCartDrawer(false);
+            showToast(`অর্ডার (${newOrder.orderId}) সফলভাবে সম্পন্ন হয়েছে!`);
+            switchMainView('orders');
+        }
+
+        function updateOrderBadge() {
+            document.getElementById('orderCountBadge').innerText = ordersDB.length;
+        }
+
+        function renderOrders() {
+            const box = document.getElementById('ordersListContainer');
+            if (ordersDB.length === 0) {
+                box.innerHTML = `<div class="bg-white p-10 rounded-2xl border text-center text-slate-500">এখনো কোনো অর্ডার করা হয়নি।</div>`;
+                return;
+            }
+            box.innerHTML = ordersDB.map(o => `
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                        <div>
+                            <span class="text-xs font-bold bg-krishi-100 text-krishi-800 px-2.5 py-1 rounded-lg">অর্ডার আইডি: ${o.orderId}</span>
+                            <span class="text-xs text-slate-500 ml-2">${o.date}</span>
+                        </div>
+                        <span class="text-xs font-bold bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full">${o.status}</span>
+                    </div>
+                    <div class="text-sm text-slate-700">
+                        <p><strong>ক্রেতা:</strong> ${o.buyer} | <strong>ঠিকানা:</strong> ${o.address}</p>
+                        <p><strong>পেমেন্ট:</strong> ${o.paymentMethod}</p>
+                    </div>
+                    <div class="bg-slate-50 p-3 rounded-xl text-xs space-y-1">
+                        ${o.items.map(i => `<div class="flex justify-between"><span>${i.name} (${i.qty} কেজি)</span><strong>₹${i.price * i.qty}</strong></div>`).join('')}
+                        <div class="border-t pt-1.5 mt-1.5 flex justify-between text-sm font-bold text-krishi-800">
+                            <span>মোট বিল:</span>
+                            <span>₹${o.total}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openAiModal() { document.getElementById('aiModal').classList.remove('hidden'); }
+        function closeAiModal() { document.getElementById('aiModal').classList.add('hidden'); }
+        function askQuickAi(q) {
+            document.getElementById('aiUserInput').value = q;
+            handleAiChat(new Event('submit'));
+        }
+        function handleAiChat(e) {
+            e.preventDefault();
+            const input = document.getElementById('aiUserInput');
+            const q = input.value.trim();
+            if (!q) return;
+
+            const box = document.getElementById('aiChatBox');
+            box.innerHTML += `<div class="bg-krishi-600 text-white p-3 rounded-xl ml-8 text-right">${q}</div>`;
+            input.value = '';
+let ans = "agridirect.in-এ আপনি সরাসরি কৃষকের কাছ থেকে তাজা ফসল কিনতে বা নিজের ফসল বিক্রি করতে পারবেন।";
+            if (q.includes("অর্ডার")) ans = "১. রেজিস্ট্রেশন করুন। ২. 'বাজার' ট্যাব থেকে ফসল কার্টে নিন। ৩. কার্ট থেকে পেমেন্ট পদ্ধতি বেছে অর্ডার কনফার্ম করুন।";
+            else if (q.includes("কৃষক")) ans = "কৃষক হিসেবে লগইন করে 'কৃষক ড্যাশবোর্ড' থেকে যেকোনো ফসল বাজারে যোগ করতে পারবেন।";
+            else if (q.includes("দর")) ans = "আজকে আলু ₹২২/কেজি, টমেটো ₹৩৫/কেজি এবং গোবিন্দভোগ চাল ₹৮৫/কেজি দরে উপলব্ধ।";
+
+            setTimeout(() => {
+                box.innerHTML += `<div class="bg-white p-3 rounded-xl border border-slate-200 mr-6 shadow-sm"><strong>AgriDirect AI:</strong> ${ans}</div>`;
+                box.scrollTop = box.scrollHeight;
+            }, 300);
+        }
+
+        renderSavedUsers();
+        updateUserHeader();
+        updateCartUI();
+        updateOrderBadge();
+    </script>
+</body>
+</html>
